@@ -1,0 +1,104 @@
+#include <SDL2/SDL.h>
+#include "button.h"
+#include <iostream>
+
+
+const int WIDTH = 800;
+const int HEIGHT = 600;
+const int BUTTON_WIDTH = 200;
+const int BUTTON_HEIGHT = 50;
+
+int main(int argc, char* argv[]) {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    SDL_Window* window = SDL_CreateWindow("Test App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
+
+    if (window == nullptr) {
+        std::cerr << "SDL window creation failed: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (renderer == nullptr) {
+        std::cerr << "SDL renderer creation failed: " << SDL_GetError() << std::endl;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    bool quit = false;
+    bool buttonClicked = false;
+
+    //int buttonX = (WIDTH - BUTTON_WIDTH) / 2;
+    //int buttonY = (HEIGHT - BUTTON_HEIGHT) / 2;
+
+    SDL_Color backgroundColor = { 255, 240, 200, 255  }; // White background
+    SDL_Color buttonColor = { 128, 128, 128, 255 }; // Gray button
+
+    while (!quit) {
+        SDL_Event windowEvent;
+
+        while (SDL_PollEvent(&windowEvent)) {
+            if (windowEvent.type == SDL_QUIT) {
+                quit = true;
+            }
+
+            Button button1(100, 325, BUTTON_WIDTH, BUTTON_HEIGHT, buttonColor, "one");
+            Button button2(500, 325, BUTTON_WIDTH, BUTTON_HEIGHT, buttonColor, "two"); 
+
+            /*
+            // Check for mouse button down event
+            if (windowEvent.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX = windowEvent.button.x;
+                int mouseY = windowEvent.button.y;
+
+                // Check if the mouse click is within the button's coordinates
+                //if (mouseX >= buttonX && mouseX < buttonX + BUTTON_WIDTH &&
+                //    mouseY >= buttonY && mouseY < buttonY + BUTTON_HEIGHT) {
+                //    buttonClicked = true;
+                //    buttonColor = { 0, 0, 0, 255 };
+                //    std::cout << "Button Clicked" << std::endl;
+                //}
+            }
+
+            // Check for mouse button up event
+            if (windowEvent.type == SDL_MOUSEBUTTONUP && buttonClicked) {
+                buttonClicked = false;
+                buttonColor = { 128, 128, 128, 255 };
+            }
+            */
+        }
+
+        // Clear the renderer with the background color
+        SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+        SDL_RenderClear(renderer);
+
+        /*
+        // Render the first button with the current color
+        SDL_SetRenderDrawColor(renderer, buttonColor.r, buttonColor.g, buttonColor.b, buttonColor.a);
+        SDL_Rect buttonOne = { 100, 325, BUTTON_WIDTH, BUTTON_HEIGHT };
+        SDL_RenderFillRect(renderer, &buttonOne);
+
+        // Render the second button with the current color  
+        SDL_SetRenderDrawColor(renderer, buttonColor.r, buttonColor.g, buttonColor.b, buttonColor.a);
+        SDL_Rect buttonTwo = { 500, 325, BUTTON_WIDTH, BUTTON_HEIGHT };
+        SDL_RenderFillRect(renderer, &buttonTwo);
+        */
+
+
+        // Present the renderer to display the changes
+        SDL_RenderPresent(renderer);
+    }
+
+    // Cleanup
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}
